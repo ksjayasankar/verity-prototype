@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Verity - Frontend Prototype
+
+A frontend-only prototype for "Verity", a tool that converts official market disclosures into short, evidence-linked briefs that are cryptographically verifiable on-chain.
+
+This project was built as a demo-ready prototype with no backend. All operations, including cryptographic hashing and mock "on-chain" events, are handled entirely on the client-side.
+
+## Key Features
+
+- **S1: Ingest:** Add a new disclosure via a mock URL.
+- **S2: AI Draft:** View AI-extracted facts and a generated summary.
+- **S3: Review & Approve:** Validate the brief, provide approver details, and "commit" the data.
+- **S4: Public Brief:** View the final, published brief with evidence popovers and integrity badge.
+- **S5: Client-Side Verification:** Verify the integrity of a brief by dropping the source artifacts, which are hashed locally in the browser.
+- **S6: Version Diffing:** Compare v1 and v2 of a brief to see what changed.
+- **S7: Settings:** View mock application settings and embeddable snippets.
+- **Fake Block Explorer:** A mock explorer page to view the details of a "committed" event.
+
+## Tech Stack
+
+- **Framework:** Next.js 14 (App Router)
+- **UI:** React 18, Tailwind CSS v4 (CSS-first configuration)
+- **State Management:** Zustand
+- **Cryptography:** Web Crypto API (for SHA-256), `js-sha3` (for keccak256)
+- **Tooling:** TypeScript, PostCSS, Lucide Icons
+
+---
 
 ## Getting Started
 
-First, run the development server:
+Follow these instructions to get the project running on your local machine for development and demonstration purposes.
+
+### Prerequisites
+
+You need to have Node.js installed on your machine.
+- **Node.js** (v18.x or newer is recommended)
+
+You can check your Node.js version by running:
+```bash
+node -v
+```
+
+### Installation & Setup
+
+1. **Clone the repository:** If you have the project files already, you can skip this step. Otherwise, clone the repository to your local machine.
+
+```bash
+git clone <your-repository-url>
+cd verity-prototype
+```
+
+2. **Install dependencies:** This command will install all the necessary packages defined in `package.json`.
+
+```bash
+npm install
+```
+
+3. **Run the development server:** This command starts the Next.js development server, typically on port 3000.
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. **Open the application:** Open your web browser and navigate to http://localhost:3000. You should see the Verity "Ingest" page.
