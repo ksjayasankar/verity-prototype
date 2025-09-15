@@ -1,7 +1,8 @@
+// /store/useStore.ts
 import { create } from 'zustand';
 import { Draft, ChainEvent, Settings } from '../lib/types';
 import initialDrafts from '../data/drafts.json';
-import initialEvents from '../public/events.json';
+import initialEvents from '../data/events.json'; // <-- move file to /data
 
 interface VerityState {
   drafts: Draft[];
@@ -11,10 +12,12 @@ interface VerityState {
   initialize: () => void;
   getDraft: (docId: string) => Draft | undefined;
   getEventsForDoc: (docId: string) => ChainEvent[];
+  getEventByDocId: (docId: string) => ChainEvent | undefined;
   addDraft: (draft: Draft) => void;
   updateDraft: (docId: string, updates: Partial<Draft>) => void;
   updateDraftStatus: (docId: string, status: Draft['status']) => void;
   addEvent: (event: ChainEvent) => void;
+  createNewVersion: (docId: string) => string | null;
 }
 
 export const useStore = create<VerityState>((set, get) => ({
@@ -25,42 +28,66 @@ export const useStore = create<VerityState>((set, get) => ({
     dataCutoff: 'June 2024',
     network: 'Polygon Amoy Testnet',
     contractAddress: '0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B',
-    disclosureText: 'AI used; human-approved; hashes on-chain'
+    disclosureText: 'AI used; human-approved; hashes on-chain',
   },
   isInitialized: false,
 
   initialize: () => {
     if (get().isInitialized) return;
-    // In a real app, this would be an API call. Here we load from JSON.
-    set({ drafts: initialDrafts as Draft[], events: initialEvents as ChainEvent[], isInitialized: true });
+    set({
+      drafts: initialDrafts as Draft[],
+      events: (initialEvents as ChainEvent[]).sort(
+        (a, b) => new Date(b.ts).getTime() - new Date(a.ts).getTime()
+      ),
+      isInitialized: true,
+    });
   },
 
-  getDraft: (docId: string) => {
-    return get().drafts.find(d => d.docId === docId);
-  },
-  
+  getDraft: (docId: string) => get().drafts.find(d => d.docId === docId),
+
   getEventsForDoc: (docId: string) => {
-    const baseId = docId.replace(/-V\d+$/, ''); // e.g., "DOC-V2" -> "DOC"
+    const baseId = docId.replace(/-V\d+$/, '');
     return get().events.filter(e => e.docId.startsWith(baseId));
   },
 
-  addDraft: (draft: Draft) => {
-    set(state => ({ drafts: [...state.drafts, draft] }));
-  },
+  getEventByDocId: (docId: string) => get().events.find(e => e.docId === docId),
 
-  updateDraft: (docId: string, updates: Partial<Draft>) => {
+  addDraft: (draft: Draft) => set(state => ({ drafts: [...state.drafts, draft] })),
+
+  updateDraft: (docId, updates) =>
     set(state => ({
-      drafts: state.drafts.map(d => d.docId === docId ? { ...d, ...updates } : d)
-    }));
-  },
+      drafts: state.drafts.map(d => (d.docId === docId ? { ...d, ...updates } : d)),
+    })),
 
-  updateDraftStatus: (docId: string, status: Draft['status']) => {
+  updateDraftStatus: (docId, status) =>
     set(state => ({
-      drafts: state.drafts.map(d => d.docId === docId ? { ...d, status } : d)
-    }));
-  },
+      drafts: state.drafts.map(d => (d.docId === docId ? { ...d, status } : d)),
+    })),
 
-  addEvent: (event: ChainEvent) => {
-    set(state => ({ events: [...state.events, event] }));
+  addEvent: (event: ChainEvent) =>
+    set(state => ({ events: [event, ...state.events] })),
+
+  createNewVersion: (docId: string): string | null => {
+    const originalDraft = get().drafts.find(d => d.docId === docId);
+    if (!originalDraft) return null;
+
+    const baseId = docId.replace(/-V\d+$/, '');
+    const existingVersions = get().drafts.filter(d => d.docId.startsWith(baseId));
+    const nextVersionNumber = existingVersions.length + 1;
+    const newDocId = `${baseId}-V${nextVersionNumber}`;
+
+    const newDraft: Draft = {
+      ...JSON.parse(JSON.stringify(originalDraft)),
+      docId: newDocId,
+      title: `REVISED: ${originalDraft.title}`.replace('REVISED: REVISED: ', 'REVISED: '),
+      status: 'review',
+      generated_by: {
+        ...originalDraft.generated_by,
+        at: new Date().toISOString(),
+      },
+    };
+
+    set(state => ({ drafts: [...state.drafts, newDraft] }));
+    return newDocId;
   },
 }));

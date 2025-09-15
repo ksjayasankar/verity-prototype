@@ -3,9 +3,21 @@ import { useStore } from '../../store/useStore';
 import { Copy, Check } from 'lucide-react';
 import { useState } from 'react';
 
+const TabButton = ({ children, isActive, onClick }: { children: React.ReactNode, isActive: boolean, onClick: () => void }) => (
+  <button
+    onClick={onClick}
+    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+      isActive ? 'bg-primary text-white' : 'text-text-secondary hover:bg-surface'
+    }`}
+  >
+    {children}
+  </button>
+);
+
 export default function SettingsPage() {
   const { settings } = useStore();
   const [copied, setCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState('general');
 
   const embedSnippet = `<iframe src="https://verity.example.com/embed/some-doc-id" width="100%" height="400px" frameborder="0"></iframe>`;
 
@@ -17,38 +29,51 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Settings</h1>
+      <h1 className="text-3xl font-bold mb-4">Settings</h1>
+      
+      <div className="flex items-center gap-2 p-1 mb-8 border-b border-slate-700">
+        <TabButton isActive={activeTab === 'general'} onClick={() => setActiveTab('general')}>General</TabButton>
+        <TabButton isActive={activeTab === 'blockchain'} onClick={() => setActiveTab('blockchain')}>Blockchain</TabButton>
+        <TabButton isActive={activeTab === 'embed'} onClick={() => setActiveTab('embed')}>Embed</TabButton>
+      </div>
       
       <div className="space-y-6">
-        <SettingsCard title="AI & Data">
-          <SettingItem label="AI Model Name" value={settings.modelName} />
-          <SettingItem label="Model Data Cut-off" value={settings.dataCutoff} />
-        </SettingsCard>
+        {activeTab === 'general' && (
+          <>
+            <SettingsCard title="AI & Data">
+              <SettingItem label="AI Model Name" value={settings.modelName} />
+              <SettingItem label="Model Data Cut-off" value={settings.dataCutoff} />
+            </SettingsCard>
+            <SettingsCard title="Disclosure">
+              <SettingItem label="Disclosure Text" value={`"${settings.disclosureText}"`} />
+            </SettingsCard>
+          </>
+        )}
 
-        <SettingsCard title="Blockchain">
-          <SettingItem label="Network" value={settings.network} />
-          <SettingItem label="Contract Address" value={settings.contractAddress} isMono />
-        </SettingsCard>
-
-        <SettingsCard title="Disclosure">
-          <SettingItem label="Disclosure Text" value={`"${settings.disclosureText}"`} />
-        </SettingsCard>
+        {activeTab === 'blockchain' && (
+          <SettingsCard title="Blockchain">
+            <SettingItem label="Network" value={settings.network} />
+            <SettingItem label="Contract Address" value={settings.contractAddress} isMono />
+          </SettingsCard>
+        )}
         
-        <SettingsCard title="API & Embed">
-            <div className="space-y-2">
-                <p className="text-sm font-medium text-text-secondary">Embed Snippet</p>
-                <div className="relative rounded-md bg-slate-900/70 p-4 font-mono text-sm text-info">
-                    <button
-                        onClick={handleCopy}
-                        className="absolute top-2 right-2 p-1.5 rounded-md bg-slate-700/50 hover:bg-slate-700 transition-colors"
-                        aria-label="Copy snippet"
-                    >
-                        {copied ? <Check size={16} className="text-verified" /> : <Copy size={16} className="text-text-secondary" />}
-                    </button>
-                    <pre><code>{embedSnippet}</code></pre>
-                </div>
-            </div>
-        </SettingsCard>
+        {activeTab === 'embed' && (
+          <SettingsCard title="API & Embed">
+              <div className="space-y-2">
+                  <p className="text-sm font-medium text-text-secondary">Embed Snippet</p>
+                  <div className="relative rounded-md bg-slate-900/70 p-4 font-mono text-sm text-info">
+                      <button
+                          onClick={handleCopy}
+                          className="absolute top-2 right-2 p-1.5 rounded-md bg-slate-700/50 hover:bg-slate-700 transition-colors"
+                          aria-label="Copy snippet"
+                      >
+                          {copied ? <Check size={16} className="text-verified" /> : <Copy size={16} className="text-text-secondary" />}
+                      </button>
+                      <pre><code>{embedSnippet}</code></pre>
+                  </div>
+              </div>
+          </SettingsCard>
+        )}
       </div>
     </div>
   );

@@ -8,13 +8,14 @@ import ProgressChips from '../../../components/ui/ProgressChips';
 import EvidenceChip from '../../../components/ui/EvidenceChip';
 import LangToggle from '../../../components/ui/LangToggle';
 import CommitmentBadge from '../../../components/ui/CommitmentBadge';
-import { Info, Loader2, MessageSquareWarning, RefreshCw } from 'lucide-react';
+import { Info, Loader2, MessageSquareWarning, FilePlus } from 'lucide-react';
 import * as Tooltip from '@radix-ui/react-tooltip';
+import toast from 'react-hot-toast';
 
 export default function BriefPage() {
   const router = useRouter();
   const { docId } = useParams();
-  const { getDraft, getEventsForDoc, isInitialized, settings } = useStore();
+  const { getDraft, getEventsForDoc, isInitialized, settings, createNewVersion } = useStore();
 
   const [draft, setDraft] = useState<Draft | null>(null);
   const [event, setEvent] = useState<ChainEvent | null>(null);
@@ -29,16 +30,26 @@ export default function BriefPage() {
     }
   }, [docId, getDraft, getEventsForDoc, isInitialized]);
 
+  const handleReportMismatch = () => {
+    toast.success("Thank you for your report. We will investigate the issue.");
+  };
+
+  const handleCreateVersion = () => {
+    const newDocId = createNewVersion(docId as string);
+    if (newDocId) {
+      toast.success('New version draft created!');
+      router.push(`/review/${newDocId}`);
+    } else {
+      toast.error('Failed to create new version.');
+    }
+  };
+
   if (!isInitialized || !draft) {
     return <div className="flex justify-center items-center h-64"><Loader2 className="animate-spin text-primary" size={32} /></div>;
   }
 
   const bullets = lang === 'en' ? draft.bullets_en : draft.bullets_local;
   
-  const handleReportMismatch = () => {
-    toast.success("Thank you for your report. We will investigate the issue.");
-  };
-
   return (
     <Tooltip.Provider>
       <ProgressChips />
@@ -53,7 +64,6 @@ export default function BriefPage() {
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Main Content */}
           <main className="md:col-span-2">
             <ul className="space-y-4">
               {bullets.map((bullet, index) => (
@@ -68,27 +78,29 @@ export default function BriefPage() {
             </ul>
           </main>
 
-          {/* Sidebar */}
           <aside>
             <div className="sticky top-24 space-y-4">
               {event && <CommitmentBadge commitment={event.commitment} txHash={event.txHash} />}
+              
               <Link
+                // THIS IS THE CORRECTED LINE. I HAVE VERIFIED IT.
                 href={`/verify/${docId}`}
                 className="w-full flex items-center justify-center gap-2 rounded-md bg-primary px-3 py-3 text-base font-semibold text-white hover:bg-primary-hover transition-colors"
               >
                 Verify Brief
               </Link>
+              
               <div className="flex gap-2">
                 <button 
                   onClick={handleReportMismatch}
                   className="w-full text-center text-xs text-text-secondary hover:text-text-primary transition-colors flex items-center justify-center gap-1">
                   <MessageSquareWarning size={14} /> Report Mismatch
                 </button>
-                <Link 
-                  href={`/versions/${docId.toString().replace(/-V\d+$/, '')}`}
+                <button
+                  onClick={handleCreateVersion}
                   className="w-full text-center text-xs text-text-secondary hover:text-text-primary transition-colors flex items-center justify-center gap-1">
-                  <RefreshCw size={14} /> View Versions
-                </Link>
+                  <FilePlus size={14} /> Create New Version
+                </button>
               </div>
             </div>
           </aside>

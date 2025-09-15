@@ -13,9 +13,10 @@ import { mockApi } from '../../../lib/mockApi';
 export default function ReviewPage() {
   const router = useRouter();
   const { docId } = useParams();
-  const { getDraft, isInitialized } = useStore();
+  const { getDraft, isInitialized, updateDraft } = useStore();
 
   const [draft, setDraft] = useState<Draft | null>(null);
+  const [editableDraft, setEditableDraft] = useState<Draft | null>(null);
   const [lang, setLang] = useState<'en' | 'local'>('en');
   const [approverName, setApproverName] = useState('');
   const [approverOrg, setApproverOrg] = useState('');
@@ -26,43 +27,52 @@ export default function ReviewPage() {
     if (isInitialized) {
       const foundDraft = getDraft(docId as string);
       setDraft(foundDraft || null);
+      if (foundDraft) {
+        setEditableDraft(JSON.parse(JSON.stringify(foundDraft))); // Deep copy
+      }
     }
   }, [docId, getDraft, isInitialized]);
 
-  // Validations
-  const hasEvidence = draft?.bullets_en.length > 0;
-  const isJsonValid = draft?.facts && Object.keys(draft.facts.fields).length > 0;
-  const isMultilingual = draft?.bullets_local && draft.bullets_local.length > 0;
+  const hasEvidence = editableDraft?.bullets_en.length > 0;
+  const isJsonValid = editableDraft?.facts && Object.keys(editableDraft.facts.fields).length > 0;
+  const isMultilingual = editableDraft?.bullets_local && editableDraft.bullets_local.length > 0;
   const isApproverInfoPresent = approverName.trim() !== '' && approverOrg.trim() !== '';
   const canCommit = hasEvidence && isJsonValid && isMultilingual && isApproverInfoPresent;
 
   const handleCommit = async () => {
-    if (!draft || !canCommit) return;
+    if (!editableDraft || !canCommit) return;
     setIsModalOpen(false);
     setIsCommitting(true);
     toast.loading('Sending commit to chain...', { id: 'commit' });
     
     try {
-      const event = await mockApi.commit(draft, approverName, approverOrg);
+      const event = await mockApi.commit(editableDraft, approverName, approverOrg);
+      updateDraft(editableDraft.docId, editableDraft);
       toast.success(`Commit confirmed! Tx: ${event.txHash.slice(0, 12)}...`, { id: 'commit', duration: 5000 });
-      router.push(`/brief/${docId}`);
+      router.push(`/brief/${editableDraft.docId}`);
     } catch (error) {
       toast.error('Failed to commit.', { id: 'commit' });
       setIsCommitting(false);
     }
   };
 
-  if (!isInitialized || !draft) {
+  const handleFactChange = (field: string, value: string | number) => {
+    if (!editableDraft) return;
+    const newDraft = { ...editableDraft };
+    newDraft.facts.fields[field] = value;
+    setEditableDraft(newDraft);
+  };
+
+  if (!isInitialized || !draft || !editableDraft) {
     return <div className="flex justify-center items-center h-64"><Loader2 className="animate-spin text-primary" size={32} /></div>;
   }
 
-  const bullets = lang === 'en' ? draft.bullets_en : draft.bullets_local;
+  const bullets = lang === 'en' ? editableDraft.bullets_en : editableDraft.bullets_local;
 
   return (
     <>
       <ProgressChips />
       <div className="max-w-6xl mx-auto mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Pane: Validation & Approver */}
         <aside className="lg:col-span-1">
           <div className="sticky top-24 rounded-xl border border-slate-700 bg-surface p-6">
             <h2 className="text-xl font-semibold mb-6">Confirm Inputs</h2>
@@ -95,12 +105,27 @@ export default function ReviewPage() {
           </div>
         </aside>
 
-        {/* Right Pane: Content */}
         <main className="lg:col-span-2 rounded-xl border border-slate-700 bg-surface p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold">Key Highlights</h2>
             <LangToggle lang={lang} setLang={setLang} />
           </div>
+          
+          {editableDraft.facts.fields.hasOwnProperty('dividend_per_share') && (
+            <div className="my-6 p-4 bg-slate-900/70 rounded-lg">
+              <label htmlFor="dividend" className="block text-sm font-medium text-text-secondary mb-2">
+                Editable Fact: Dividend Per Share
+              </label>
+              <input
+                id="dividend"
+                type="number"
+                value={editableDraft.facts.fields.dividend_per_share || ''}
+                onChange={(e) => handleFactChange('dividend_per_share', parseFloat(e.target.value))}
+                className="w-full bg-slate-800 border-slate-700 rounded-md px-3 py-2 text-sm focus:ring-primary focus:border-primary"
+              />
+            </div>
+          )}
+
           <ul className="space-y-4">
             {bullets.map((bullet, index) => (
               <li key={index} className="flex items-start">
@@ -119,7 +144,6 @@ export default function ReviewPage() {
         <p>A cryptographic commitment will be generated upon approval. • Chain Network: Polygon Testnet</p>
       </div>
 
-      {/* Commit Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center" onClick={() => setIsModalOpen(false)}>
           <div className="bg-surface rounded-xl p-8 max-w-lg w-full shadow-2xl border border-slate-700" onClick={e => e.stopPropagation()}>
