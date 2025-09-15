@@ -1,26 +1,45 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+  This is the new CSS-first configuration block.
+  We define our entire custom theme here using CSS variables.
+*/
+@theme {
+  /*
+    1. Colors
+    Tailwind will automatically create bg-primary, text-primary, border-primary, etc.
+    from --color-primary.
+  */
+  --color-background: #0f172a;
+  --color-surface: #1e293b;
+  --color-primary: #6366f1;
+  --color-primary-hover: #4f46e5;
+  --color-info: #0ea5e9;
+  --color-verified: #10b981;
+  --color-error: #ef4444;
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+
+  /*
+    2. Border Radius
+    This creates rounded-lg and rounded-xl utilities.
+  */
+  --radius-lg: 12px;
+  --radius-xl: 20px;
+
+  /*
+    3. Fonts
+    This configures the font-sans and font-mono utilities.
+  */
+  --font-sans: "Inter", "sans-serif";
+  --font-mono: "monospace";
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* 
+  You can still have global base styles here.
+  This runs after Tailwind's base styles.
+*/
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

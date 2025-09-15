@@ -1,0 +1,84 @@
+[
+  {
+    "docId": "BSE-2025-09-01-ZESTRAL",
+    "title": "Appointment of Independent Director",
+    "company": "Zestral LLP",
+    "filing_date": "2025-09-01",
+    "source_url": "/demo/sample.pdf",
+    "doc_sha256": "4b6851e3339893570c9764506ba5f6a9173f44383437531b7dfde9f7b0369796",
+    "facts": {
+      "action_type": "board_change",
+      "fields": { "company_name": "Zestral LLP", "announcement_date": "2025-09-01", "change_type": "Appointment", "director_name": "Ms. Anya Sharma", "effective_date": "2025-09-01", "position": "Independent Director" },
+      "evidence": { "director_name": { "page": 1, "quote": "appoint Ms. Anya Sharma (DIN: 01234567) as an Additional Director (Non-Executive Independent Director) of the Company" }, "effective_date": { "page": 1, "quote": "with effect from September 1, 2025" } },
+      "risk_tags": ["governance"]
+    },
+    "bullets_en": [
+      "Zestral LLP announced the appointment of Ms. Anya Sharma as an Independent Director.",
+      "The appointment is effective from September 1, 2025.",
+      "This change is part of a broader board restructuring initiative.",
+      "Ms. Sharma brings over 15 years of experience in corporate governance.",
+      "The company's stock remained stable following the announcement."
+    ],
+    "bullets_local": [
+      "ज़ेस्ट्रल एलएलपी ने सुश्री अन्या शर्मा को एक स्वतंत्र निदेशक के रूप में नियुक्त करने की घोषणा की।",
+      "यह नियुक्ति 1 सितंबर, 2025 से प्रभावी है।",
+      "यह परिवर्तन एक व्यापक बोर्ड पुनर्गठन पहल का हिस्सा है।",
+      "सुश्री शर्मा कॉर्पोरेट प्रशासन में 15 से अधिक वर्षों का अनुभव रखती हैं।",
+      "घोषणा के बाद कंपनी का स्टॉक स्थिर रहा।"
+    ],
+    "generated_by": { "model": "V-Extractor-4.1-Turbo", "at": "2025-09-15T10:25:00Z" },
+    "status": "published"
+  },
+  {
+    "docId": "NSE-2025-08-12-RELIANCE-V1",
+    "title": "Quarterly Results Q2 2025",
+    "company": "Reliance Industries",
+    "filing_date": "2025-08-12",
+    "source_url": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/...",
+    "doc_sha256": "aaa...",
+    "facts": { "action_type": "dividend", "fields": { "revenue": 25000, "profit": 5000, "dividend_per_share": 10 }, "evidence": { "dividend_per_share": { "page": 4, "quote": "a dividend of ₹10 per share" } }, "risk_tags": [] },
+    "bullets_en": ["Revenue grew by 15% YoY.", "Declared a dividend of ₹10 per share."],
+    "bullets_local": ["राजस्व में 15% की वार्षिक वृद्धि हुई।", "₹10 प्रति शेयर का लाभांश घोषित किया।"],
+    "generated_by": { "model": "V-Extractor-4.0", "at": "2025-08-12T13:00:00Z" },
+    "status": "published"
+  },
+    {
+    "docId": "NSE-2025-08-12-RELIANCE-V2",
+    "title": "REVISED: Quarterly Results Q2 2025",
+    "company": "Reliance Industries",
+    "filing_date": "2025-08-15",
+    "source_url": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/...",
+    "doc_sha256": "bbb...",
+    "facts": { "action_type": "dividend", "fields": { "revenue": 25000, "profit": 5250, "dividend_per_share": 10.5 }, "evidence": { "dividend_per_share": { "page": 4, "quote": "a revised dividend of ₹10.50 per share" } }, "risk_tags": [] },
+    "bullets_en": ["Revenue grew by 15% YoY.", "Declared a revised dividend of ₹10.50 per share.", "Net profit corrected to ₹5250 crore."],
+    "bullets_local": ["राजस्व में 15% की वार्षिक वृद्धि हुई।", "₹10.50 प्रति शेयर का संशोधित लाभांश घोषित किया।", "शुद्ध लाभ ₹5250 करोड़ पर संशोधित किया गया।"],
+    "generated_by": { "model": "V-Extractor-4.0", "at": "2025-08-15T10:00:00Z" },
+    "status": "published"
+  },
+  {
+    "docId": "DRAFT-002",
+    "title": "Board Meeting Outcome",
+    "company": "Infotech Ltd.",
+    "filing_date": "2025-09-10",
+    "source_url": "https://www.bseindia.com/...",
+    "doc_sha256": "ccc...",
+    "facts": { "action_type": "board_change", "fields": {}, "evidence": {}, "risk_tags": [] },
+    "bullets_en": [],
+    "bullets_local": [],
+    "generated_by": { "model": "V-Extractor-4.1-Turbo", "at": "2025-09-16T09:00:00Z" },
+    "status": "draft"
+  },
+  {
+    "docId": "DRAFT-003",
+    "title": "Acquisition Announcement",
+    "company": "PharmaCorp",
+    "filing_date": "2025-09-11",
+    "source_url": "https://www.bseindia.com/...",
+    "doc_sha256": "ddd...",
+    "facts": { "action_type": "buyback", "fields": { "acquired_company": "BioGen" }, "evidence": {}, "risk_tags": ["ma"] },
+    "bullets_en": ["PharmaCorp to acquire BioGen for $500M.", "Deal expected to close in Q4 2025."],
+    "bullets_local": ["फार्माकॉर्प $500M में बायोजेन का अधिग्रहण करेगी।", "सौदा 2025 की चौथी तिमाही में पूरा होने की उम्मीद है।"],
+    "generated_by": { "model": "V-Extractor-4.1-Turbo", "at": "2025-09-16T10:00:00Z" },
+    "status": "review"
+  }
+]
